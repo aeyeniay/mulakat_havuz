@@ -1,0 +1,16 @@
+AĞ UZMANI
+(Aylık brüt sözleşme ücret tavanının 2 katına kadar)
+
+Genel Şartlar maddesinde belirtilen C Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
+
+8.1. Yerel Alan Ağ (LAN), Geniş Alan Ağ (WAN), Kablosuz Yerel Alan Ağ (WLAN), Sanal Özel Ağ (VPN), Dinamik Yönlendirme Protokolleri ve ağ teknolojileri konusunda bilgi sahibi olmak, 
+8.2. TCP/IP, DNS, DHCP, 802.1x konularında bilgi sahibi olmak, 
+8.3. Wireless, Load Balancer ve Firewall teknolojileri ve yönetimi konusunda bilgi sahibi olmak, 
+8.4. Antivirüs, IDS/IPS teknolojileri hakkında bilgi sahibi olmak, 
+8.5. DDoS Protection teknolojisi ve yönetimi hakkında bilgi sahibi olmak, 
+8.6. Network mimarileri tasarımı, planlaması ve entegrasyonu konularında bilgi sahibi olmak, 
+8.7. Ağ güvenliği konusunda bilgi sahibi olmak, 
+8.8. Büyük kapasiteli omurga cihazların yönetimi konusunda bilgi sahibi olmak, 
+8.9. Ayrıcalıklı Erişim Yönetimi (PAM) kurulumu, yönetimi konularında bilgi sahibi olmak, 
+8.10. NAC (Network Access Control) teknolojisi ve yönetimi hakkında bilgi sahibi olmak, 
+8.11. Ağ İzleme (Network Monitoring) araçlarının kurulumu, yönetimi ve raporlama konularında bilgi sahibi olmak,

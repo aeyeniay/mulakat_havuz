@@ -1,0 +1,14 @@
+KIDEMLİ MOBİL YAZILIM GELİŞTİRME UZMANI
+(Aylık brüt sözleşme ücret tavanının 3 katına kadar)
+
+Genel Şartlar maddesinde belirtilen B Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
+
+2.1. Yazılım yaşam döngüsü ve güvenli yazılım geliştirme konularında bilgi sahibi olmak,
+2.2. Mobil teknolojiler (React Native) ile uygulama geliştirme konusunda bilgi sahibi olmak
+2.3. SOAP/REST mimarisindeki web servislerle, JSON/XML veri alışverişi protokolleri konularında bilgi sahibi olmak,
+2.4. SoapUI, Postman gibi web servis test araçlarının kullanımı hakkında bilgi sahibi olmak
+2.5. TFS, GIT, SVN gibi kaynak kod kontrol yönetim araçları hakkında bilgi sahibi olmak,
+2.6. Tercihen, Mikroservisler ve Web Servisleri teknolojileri hakkında bilgi sahibi olmak
+2.7. Tercihen, JavaScript, CSS3, HTML5 gibi web teknolojilerinde bilgi sahibi olmak,
+2.8. Tercihen, Google Play Store veya App Store'da yayınlanmış referans uygulama sunabilmek,
+2.9. Tercihen, Ön bellekleme (caching) ve kullanımı konusunda bilgi sahibi olmak,

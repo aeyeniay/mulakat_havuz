@@ -1,0 +1,11 @@
+YAZILIM GELİŞTİRME UZMANI
+(Aylık brüt sözleşme ücret tavanının 2 katına kadar)
+
+Genel Şartlar maddesinde belirtilen C Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
+
+13.1. .Net Teknolojilerinde (C#,.NET Core, .NET Framework, ASP.NET Core, ASP.NET MVC) bilgi sahibi olmak,
+13.2. ORM araçlarında (Entity Framework, Entity Framework Core, Dapper vb.) bilgi sahibi olmak,
+13.3. MSSQL veya PostgreSQL veri tabanları ile çalışan uygulama geliştirmede, T-SQL veya  PL/SQL konularında bilgi sahibi olmak, 
+13.4. Veri tabanı tasarımı, optimizasyon ve performans artırımı konusunda bilgi sahibi olmak,
+13.5. TFS, GIT, SVN gibi kaynak kod kontrol yönetim araçları hakkında bilgi sahibi olmak,
+13.6. Tercihen, Uygulama sunucusu (IIS vb.) kurulumu ve web uygulaması yayınlama (deployment) konusunda bilgi sahibi olmak.

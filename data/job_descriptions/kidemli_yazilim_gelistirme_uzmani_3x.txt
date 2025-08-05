@@ -1,0 +1,19 @@
+KIDEMLİ YAZILIM GELİŞTİRME UZMANI
+(Aylık brüt sözleşme ücret tavanının 3 katına kadar)
+
+Genel Şartlar maddesinde belirtilen B Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
+
+1.1. .Net Teknolojilerinde (C#,.NET Core, .NET Framework, ASP.NET Core, ASP.NET MVC) bilgi sahibi olmak,
+1.2. ORM araçlarında (Entity Framework, Entity Framework Core, Dapper vb.) bilgi sahibi olmak,
+1.3. MSSQL ve/veya PostgreSQL veri tabanları ile çalışan uygulama geliştirmede, T-SQL ve/veya  PL/SQL konularında bilgi sahibi olmak,
+1.4. Javascript frameworkleri ve kütüphanelerinde (Jquery,Vue, Angular, React vb.) bilgi sahibi olmak. 
+1.5. Veri tabanı tasarımı, optimizasyon ve performans artırımı konusunda bilgi sahibi olmak,
+1.6. Uygulama sunucusu (IIS vb.) kurulumu ve web uygulaması yayınlama (deployment) konusunda bilgi sahibi olmak,
+1.7. TFS, GIT, SVN gibi kaynak kod kontrol yönetim araçları hakkında bilgi sahibi olmak,
+1.8. Tercihen, Kurumsal Yazılım Mimarisi (Enterprise Software Architecture), Kurumsal Tasarım Kalıpları (Enterprise Design Patterns) konularında bilgi sahibi olmak,
+1.9. Tercihen, DevOps, CI/CD süreçleri, Konteyner mimarisi, Kubernetes, Docker hakkında bilgi sahibi olmak,
+1.10. Tercihen, Linux/Unix işletim sistemleri hakkında bilgi olmak,
+1.11. Tercihen, NoSQL veri tabanları konusunda bilgi sahibi olmak,
+1.12. Tercihen, ELK Stack(Elasticsearch, Logstash, Kibana), Tüm Metin Arama(Full-text search) konularında bilgi sahibi olmak,
+1.13. Tercihen, Dağıtık ön bellek mimarilerinin (Redis, Memcached ve benzeri uygulamalar) kullanımı ve yönetimi konusunda bilgi sahibi olmak,
+1.14. Tercihen, RabbitMQ, Apache KAFKA gibi kuyruk yönetimi araçlarının kullanımı ve yönetimi konusunda bilgi sahibi olmak.

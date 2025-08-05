@@ -1,0 +1,14 @@
+DEVOPS UZMANI
+(Aylık brüt sözleşme ücret tavanının 3 katına kadar)
+
+Genel Şartlar maddesinde belirtilen B Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
+
+4.1. Kubernetes, Docker Swarm, Rancher, OpenShift vb. konteyner teknolojilerinde bilgi sahibi olmak,
+4.2. Unix/Linux işletim sistemleri, veri tabanı, uygulama katmanı, yazılım ve güvenlik konularında bilgi sahibi olmak,
+4.3. Scripting konusunda bilgi sahibi olmak (Shell, bash, PowerShell, Python vb.)
+4.4. Versiyonlama araçlarından Git konusunda bilgi sahibi olmak,
+4.5. Gitlab CI,  Jenkins, TeamCity,Azure Devops, vb. CI/CD araçlarının en az birinde bilgi sahibi olmak,
+4.6. Jira,Bitbucket,Bamboo hakkında bilgi sahibi olmak,
+4.7. Tercihen; CI/CD araçlarının bakımı ve yönetimi ve dağıtım süreçlerini hazırlama, pipeline oluşturma vb. konularda bilgi sahibi olmak,
+4.8. Tercihen; Prometheus, Grafana, Zabbix vb. monitör araçlarından en az birisi hakkında bilgi sahibi olmak,
+4.9. Tercihen keycloak konusunda bilgi sahibi olmak,

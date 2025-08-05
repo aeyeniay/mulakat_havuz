@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  mulakat-soru-havuzu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: mulakat_soru_havuzu
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PYTHONPATH=/app
+      - TZ=Europe/Istanbul
+    volumes:
+      # Data klasörü - host ile paylaşım
+      - ../data:/app/data
+      # Konfigürasyon dosyaları (isteğe bağlı override)
+      - ../config:/app/config:ro
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    # Komut örnekleri:
+    # docker-compose run --rm mulakat-soru-havuzu generate --role yazilim_gelistirici --difficulty 4 --count 25

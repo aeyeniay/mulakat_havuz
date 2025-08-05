@@ -1,0 +1,16 @@
+KIDEMLİ SİBER GÜVENLİK UZMANI
+(Aylık brüt sözleşme ücret tavanının 3 katına kadar)
+
+Genel Şartlar maddesinde belirtilen B Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
+
+7.1. SIEM, SOAR, IDS/IPS, İçerik Filtreleme, EDR, NDR, WAF, Mail Gateway, Sandbox ve Zafiyet Tarama güvenlik teknolojileri hakkında bilgi sahibi olmak, 
+7.2. PAM, DLP, XDR, UEBA, SSL Inspection, Kaynak Kod Analiz Araçları, Database Firewall, Honeypot ve benzeri teknolojiler hakkında bilgi sahibi olmak, 
+7.3. Siber Güvenlik Operasyon Merkezi (SOC) işletim süreçleri konusunda bilgi sahibi olmak, 
+7.4. TCP/IP, ağ yapıları, ağ trafik-paket analizi ve ağ sıkılaştırma konusunda bilgi sahibi olmak,
+7.5. ISO 27001, KVKK, 5651 sayılı Kanun, regülasyon ve standartlar hakkında bilgi sahibi olmak,
+7.6. DHCP, DNS, Aktif Dizin, Exchange, Veritabanı Sistemleri web teknolojileri (IIS, SharePoint vb.) ve network protokollerinin çalışma ve sıkılaştırma mimarileri hakkında bilgi sahibi olmak, 
+7.7. Kurumun sistemlerindeki yapılandırmaları değerlendirme, olay müdahalelerinin yapılış şeklini, iyileştirme ve kurtarma planını belirleyebilecek ve yönetebilecek seviyede bilgi sahibi olmak, 
+7.8. Güvenli Yazılım Geliştirme süreçleri hakkında bilgi sahibi olmak, 
+7.9. Siber Olaylara Müdahale Ekibi (SOME) kurulum, yönetim ve işleyişi konularında bilgi sahibi olmak, 
+7.10. Bash, Perl, Python, VBScript, Powershell, PHP vb. ortamlarda script geliştirebilecek seviyede programlama bilgi sahibi olmak, 
+7.11. Dark Web, MITRE ATT&CK, CVE gibi platformlar hakkında bilgi sahibi olmak,
