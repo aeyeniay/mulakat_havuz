@@ -1,15 +1,10 @@
-SİSTEM UZMANI (Microsoft)
-(Aylık brüt sözleşme ücret tavanının 2 katına kadar)
-
-Genel Şartlar maddesinde belirtilen C Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
-
-9.1. Microsoft Exchange, Active Directory, DNS, DHCP konularında  kurulum, yapılandırma ve yönetimi hakkında ileri seviyede bilgi sahibi olmak, 
-9.2. Microsoft SCCM (System Center Configuration Manager) konusunda bilgi sahibi olmak, işletim sistemi imajlarının oluşturulması, kurulması ve dağıtılması konusunda bilgi sahibi olmak, 
-9.3. File Server, Windows Remote Desktop mimarisi ve benzeri Microsoft Windows sunucu ürünleri/servisleri hakkında kurulum, yapılandırma, cluster(kümeleme), güncelleme ve sorun çözümleme konularında bilgi sahip olmak,
-9.4. Windows sunucu ortamlarında log inceleme ve sınıflandırma, performans ve diğer sunucu problemlerinin çözümü konusunda bilgi sahibi olmak,
-9.5. Microsoft Windows Sunucularında (2016, 2019,2022) bakım izleme ve yapılandırma konularında bilgi sahibi olmak,
-9.6. Powershell scripting konusunda iyi derecede bilgi sahibi olmak,
-9.7. Failover cluster ve Always-on yapılandırmalar konularında bilgi sahibi olmak,
-9.8. Sunucu donanımları ve konfigürasyonları (disk, Ethernet, hba, raid vb.) hakkında bilgi sahibi olmak, veri depolama, sunucu RAID disk yapısı, SAN, NAS cihazları konusunda bilgi sahibi olmak, bunların mevcut sistemler ile ilişkilerini kurabilmek ve yönetebilmek,
-9.9. Veri Merkezi yönetimi konusunda bilgili olmak,
-9.10. Bilgi sistemlerinin güvenliğine yönelik olarak temel ağ, bilgi güvenliği ve bilişim sistemi içerisinde kullanılan politikalar hakkında bilgi sahibi olmak,
+- Microsoft Exchange, Active Directory, DNS, DHCP konularında  kurulum, yapılandırma ve yönetimi hakkında ileri seviyede bilgi sahibi olmak, 
+- Microsoft SCCM (System Center Configuration Manager) konusunda bilgi sahibi olmak, işletim sistemi imajlarının oluşturulması, kurulması ve dağıtılması konusunda bilgi sahibi olmak, 
+- File Server, Windows Remote Desktop mimarisi ve benzeri Microsoft Windows sunucu ürünleri/servisleri hakkında kurulum, yapılandırma, cluster(kümeleme), güncelleme ve sorun çözümleme konularında bilgi sahip olmak,
+- Windows sunucu ortamlarında log inceleme ve sınıflandırma, performans ve diğer sunucu problemlerinin çözümü konusunda bilgi sahibi olmak,
+- Microsoft Windows Sunucularında (2016, 2019,2022) bakım izleme ve yapılandırma konularında bilgi sahibi olmak,
+- Powershell scripting konusunda iyi derecede bilgi sahibi olmak,
+- Failover cluster ve Always-on yapılandırmalar konularında bilgi sahibi olmak,
+- Sunucu donanımları ve konfigürasyonları (disk, Ethernet, hba, raid vb.) hakkında bilgi sahibi olmak, veri depolama, sunucu RAID disk yapısı, SAN, NAS cihazları konusunda bilgi sahibi olmak, bunların mevcut sistemler ile ilişkilerini kurabilmek ve yönetebilmek,
+- Veri Merkezi yönetimi konusunda bilgili olmak,
+- Bilgi sistemlerinin güvenliğine yönelik olarak temel ağ, bilgi güvenliği ve bilişim sistemi içerisinde kullanılan politikalar hakkında bilgi sahibi olmak.

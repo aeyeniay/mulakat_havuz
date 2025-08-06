@@ -1,17 +1,12 @@
-İŞ ANALİSTİ
-(Aylık brüt sözleşme ücret tavanının 2 katına kadar)
-
-Genel Şartlar maddesinde belirtilen C Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
-
-11.1. Nesne tabanlı analiz ve tasarım yöntemleri hakkında bilgi sahibi olmak,
-11.2. Süreç yönetimi, süreç analizi, süreç modelleme ve süreç iyileştirme konularında bilgi sahibi olmak,
-11.3. Test süreçleri konusunda ve test senaryoları üretme, uygulama konularında bilgi sahibi olmak,
-11.4. İş süreçlerinin modellenmesi ve analizi için ihtiyaç duyulan şablonlar, formlar ve prosedürler hakkında bilgi sahibi olmak,
-11.5. İş akışı grafikleri hazırlama ve bu konudaki yazılımların (Balsamic, MS Visio, Smartdraw, MS Project vb.) kullanımı hakkında bilgi sahibi olmak,
-11.6. Kamu kurumlarının sunmuş oldukları web servisleri hakkında bilgi sahibi olmak ve servis entegrasyonları konusunda bilgi sahibi olmak,
-11.7. SoapUI, Postman, Thunderclient gibi web servis ve API test araçlarının kullanımı hakkında bilgi sahibi olmak,
-11.8. TFS ve/veya JIRA vb. araçlar üzerinde bilgi sahibi olmak,
-11.9. Web teknolojileri alanında işin analizi çıkartma, UX & Usability çalışmaları hakkında bilgi sahibi olmak,
-11.10. Agile süreçleri hakkında bilgi sahibi olmak,
-11.11. Yazılım proje yönetimi hakkında bilgi sahibi olmak,
-11.12. Tercihen SQL konusunda bilgi sahibi olmak,
+- Nesne tabanlı analiz ve tasarım yöntemleri hakkında bilgi sahibi olmak,
+- Süreç yönetimi, süreç analizi, süreç modelleme ve süreç iyileştirme konularında bilgi sahibi olmak,
+- Test süreçleri konusunda ve test senaryoları üretme, uygulama konularında bilgi sahibi olmak,
+- İş süreçlerinin modellenmesi ve analizi için ihtiyaç duyulan şablonlar, formlar ve prosedürler hakkında bilgi sahibi olmak,
+- İş akışı grafikleri hazırlama ve bu konudaki yazılımların (Balsamic, MS Visio, Smartdraw, MS Project vb.) kullanımı hakkında bilgi sahibi olmak,
+- Kamu kurumlarının sunmuş oldukları web servisleri hakkında bilgi sahibi olmak ve servis entegrasyonları konusunda bilgi sahibi olmak,
+- SoapUI, Postman, Thunderclient gibi web servis ve API test araçlarının kullanımı hakkında bilgi sahibi olmak,
+- TFS ve/veya JIRA vb. araçlar üzerinde bilgi sahibi olmak,
+- Web teknolojileri alanında işin analizi çıkartma, UX & Usability çalışmaları hakkında bilgi sahibi olmak,
+- Agile süreçleri hakkında bilgi sahibi olmak,
+- Yazılım proje yönetimi hakkında bilgi sahibi olmak,
+- Tercihen SQL konusunda bilgi sahibi olmak.

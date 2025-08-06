@@ -1,19 +1,14 @@
-KIDEMLİ VERİ TABANI UZMANI (POSTGRE SQL)
-(Aylık brüt sözleşme ücret tavanının 3 katına kadar)
-
-Genel Şartlar maddesinde belirtilen B Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
-
-3.1. PostgreSQL Veri tabanı mimarisi, veri hizmetlerinin planlaması, veri tabanı modelleme-tasarımı ve optimizasyon/normalizasyon, problem çözümleri konularında bilgi sahibi olmak,
-3.2. Veri tabanı uygulama sunucusu kümeleri (Postgresql Cluster, MSSQL Cluster vb.) ve PostgreSQL High Availability Çözümleri(Patroni, auto failover cluster, replication, disaster recovery, BarMan, PgPool, PgBouncer vb.) konularında bilgi sahibi olmak,
-3.3. Performans tuning, kapasite planlama ve güvenlik denetim günlüğü yönetimi konularında bilgi sahibi olmak ve ilgili veritabanı eklentilerini kullanma konusunda bilgi sahibi olmak,
-3.4. PostgreSQL veritabanı ile Stored Procedure bazlı veri modelleri geliştirme konusunda bilgi sahibi olmak,
-3.5. Veri tabanı performans izleme, log analizi konularında ve ilgili PostgreSQL eklentilerinin kullanımı konusunda bilgi sahibi olmak,
-3.6. Linux işletim sistemi konularında bilgi sahibi olmak,
-3.7. Linux işletim sisteminde veri tabanı ve bash scriptleri yazma, ayrıca Crontab'a entegre edilmesi konularında iyi derecede bilgi sahibi olmak,
-3.8. Linux işletim sistemi üzerinde disk yapılandırma ve genişletme (LVM) konularında bilgi sahibi olmak,
-3.9. İleri seviyede PL/pgSQL,TSQL bilgisine sahip olmak,
-3.10. ETL, OLAP ve OLTP modelleri geliştirme ve iyileştirme konularında bilgi sahibi olmak,
-3.11. ETL işlemleri kullanarak verinin kaynak sistemden hedef sisteme transferini gerçekleştirme konusunda bilgi sahibi olmak,
-3.12. ETL jobları oluşturulması, joblarda oluşabilecek problemlerin çözülmesi, ETL performansını artıracak geliştirmelerin yapılması konularında bilgi sahibi olmak,
-3.13. Anlık değişen veri aktarımı (CDC) çözümleri konusunda bilgi sahibi olmak, 
-3.14. Tercihen, NoSQL Veritabanı (ElasticSeach, MongoDb, Redis vb.) yönetiminde bilgi sahibi olmak,
+- PostgreSQL Veri tabanı mimarisi, veri hizmetlerinin planlaması, veri tabanı modelleme-tasarımı ve optimizasyon/normalizasyon, problem çözümleri konularında bilgi sahibi olmak,
+- Veri tabanı uygulama sunucusu kümeleri (Postgresql Cluster, MSSQL Cluster vb.) ve PostgreSQL High Availability Çözümleri(Patroni, auto failover cluster, replication, disaster recovery, BarMan, PgPool, PgBouncer vb.) konularında bilgi sahibi olmak,
+- Performans tuning, kapasite planlama ve güvenlik denetim günlüğü yönetimi konularında bilgi sahibi olmak ve ilgili veritabanı eklentilerini kullanma konusunda bilgi sahibi olmak,
+- PostgreSQL veritabanı ile Stored Procedure bazlı veri modelleri geliştirme konusunda bilgi sahibi olmak,
+- Veri tabanı performans izleme, log analizi konularında ve ilgili PostgreSQL eklentilerinin kullanımı konusunda bilgi sahibi olmak,
+- Linux işletim sistemi konularında bilgi sahibi olmak,
+- Linux işletim sisteminde veri tabanı ve bash scriptleri yazma, ayrıca Crontab'a entegre edilmesi konularında iyi derecede bilgi sahibi olmak,
+- Linux işletim sistemi üzerinde disk yapılandırma ve genişletme (LVM) konularında bilgi sahibi olmak,
+- İleri seviyede PL/pgSQL,TSQL bilgisine sahip olmak,
+- ETL, OLAP ve OLTP modelleri geliştirme ve iyileştirme konularında bilgi sahibi olmak,
+- ETL işlemleri kullanarak verinin kaynak sistemden hedef sisteme transferini gerçekleştirme konusunda bilgi sahibi olmak,
+- ETL jobları oluşturulması, joblarda oluşabilecek problemlerin çözülmesi, ETL performansını artıracak geliştirmelerin yapılması konularında bilgi sahibi olmak,
+- Anlık değişen veri aktarımı (CDC) çözümleri konusunda bilgi sahibi olmak, 
+- Tercihen, NoSQL Veritabanı (ElasticSeach, MongoDb, Redis vb.) yönetiminde bilgi sahibi olmak.

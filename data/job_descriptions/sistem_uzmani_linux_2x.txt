@@ -1,17 +1,12 @@
-SİSTEM UZMANI (Linux)
-(Aylık brüt sözleşme ücret tavanının 2 katına kadar)
-
-Genel Şartlar maddesinde belirtilen C Grubu kadrolara ilişkin şartları taşımanın yanı sıra;
-
-10.1. Linux işletim sistemi ve hizmetlerinin kurulumu, konfigürasyonu ve sorun çözümleme konularında bilgi sahip olmak.
-10.2. Linux disk yapılandırmaları hakkında (LVM, Multipath vb.) hakkında bilgi sahibi olmak.
-10.3. Linux sunucularında (Ubuntu 16 ve üzeri, Centos 6 ve üzeri, Debian 8 ve üzeri) güvenlik açıklarına ve tehditlerine karşı pro-aktif güvenlik tedbirlerini uygulamada bilgi sahibi olmak,
-10.4. Sunucu donanımları ve konfigürasyonları (disk, Ethernet, hba, raid vb.) hakkında bilgi sahibi olmak, veri depolama, sunucu RAID disk yapısı, SAN, NAS cihazları konusunda bilgi sahibi olmak, bunların mevcut sistemler ile ilişkilerini kurabilmek ve yönetebilmek,
-10.5. Sunucu ve istemci işletim sistemi imajlarının oluşturulması, kurulması ve dağıtılması konusunda bilgi sahibi olmak,
-10.6. Sunucu sanallaştırma ile ilgili VMWare konusunda kurulum, yapılandırma ve yönetimi hakkında bilgi sahibi olmak,
-10.7. Linux sunucu işletim sistemlerinde (Debian, RPM&Redhat) kurulum, yapılandırma, sıkılaştırma, izleme, başarım artırma ve sorun çözümlemeleri konularında bilgi sahibi olmak,
-10.8. Sistem yazılımları ve Linux Script Language bilgi sahibi olmak,
-10.9. UNIX veya Linux işletim sistemleri kurulumu, optimizasyonu, yönetimi, yedekleme işlemleri, kullanıcı yönetimi, performans yönetimi, kapasite planlama, yapılandırılması, log inceleme, güvenlik ve bakımı konularında bilgi sahibi olmak,
-10.10. DHCP, DNS, Proxy ve benzeri sistem servisleri hakkında bilgi sahibi olmak,
-10.11. Kurumsal yedekleme yazılımları, donanımları, teknolojileri ve yönetiminde bilgi sahibi olmak,
-10.12. Tercihen DevOps, Konteyner mimarisi, Kubernetes, Docker konusunda bilgi sahibi olmak,
+- Linux işletim sistemi ve hizmetlerinin kurulumu, konfigürasyonu ve sorun çözümleme konularında bilgi sahip olmak.
+- Linux disk yapılandırmaları hakkında (LVM, Multipath vb.) hakkında bilgi sahibi olmak.
+- Linux sunucularında (Ubuntu 16 ve üzeri, Centos 6 ve üzeri, Debian 8 ve üzeri) güvenlik açıklarına ve tehditlerine karşı pro-aktif güvenlik tedbirlerini uygulamada bilgi sahibi olmak,
+- Sunucu donanımları ve konfigürasyonları (disk, Ethernet, hba, raid vb.) hakkında bilgi sahibi olmak, veri depolama, sunucu RAID disk yapısı, SAN, NAS cihazları konusunda bilgi sahibi olmak, bunların mevcut sistemler ile ilişkilerini kurabilmek ve yönetebilmek,
+- Sunucu ve istemci işletim sistemi imajlarının oluşturulması, kurulması ve dağıtılması konusunda bilgi sahibi olmak,
+- Sunucu sanallaştırma ile ilgili VMWare konusunda kurulum, yapılandırma ve yönetimi hakkında bilgi sahibi olmak,
+- Linux sunucu işletim sistemlerinde (Debian, RPM&Redhat) kurulum, yapılandırma, sıkılaştırma, izleme, başarım artırma ve sorun çözümlemeleri konularında bilgi sahibi olmak,
+- Sistem yazılımları ve Linux Script Language bilgi sahibi olmak,
+- UNIX veya Linux işletim sistemleri kurulumu, optimizasyonu, yönetimi, yedekleme işlemleri, kullanıcı yönetimi, performans yönetimi, kapasite planlama, yapılandırılması, log inceleme, güvenlik ve bakımı konularında bilgi sahibi olmak,
+- DHCP, DNS, Proxy ve benzeri sistem servisleri hakkında bilgi sahibi olmak,
+- Kurumsal yedekleme yazılımları, donanımları, teknolojileri ve yönetiminde bilgi sahibi olmak,
+- Tercihen DevOps, Konteyner mimarisi, Kubernetes, Docker konusunda bilgi sahibi olmak.
