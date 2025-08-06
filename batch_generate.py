@@ -137,6 +137,51 @@ def display_plan(generation_plan):
     
     return True
 
+def calculate_question_distribution(total_count):
+    """
+    Soru dağılımını hesapla: Mesleki 1x, Teorik 2x, Pratik 2x oranında
+    
+    Args:
+        total_count (int): Toplam soru sayısı
+        
+    Returns:
+        dict: Kategori bazlı soru sayıları
+        
+    Örnekler:
+        15 soru -> 3 mesleki, 6 teorik, 6 pratik
+        20 soru -> 4 mesleki, 8 teorik, 8 pratik  
+        100 soru -> 20 mesleki, 40 teorik, 40 pratik
+    """
+    # 1x + 2x + 2x = 5x toplam oran
+    base_unit = total_count // 5
+    remainder = total_count % 5
+    
+    professional = base_unit  # 1x
+    theoretical = base_unit * 2  # 2x
+    practical = base_unit * 2  # 2x
+    
+    # Kalan soruları dağıt (önce teorik, sonra pratik, son mesleki)
+    if remainder >= 1:
+        theoretical += 1
+        remainder -= 1
+    if remainder >= 1:
+        practical += 1
+        remainder -= 1
+    if remainder >= 1:
+        professional += 1
+        remainder -= 1
+    if remainder >= 1:
+        theoretical += 1
+        remainder -= 1
+    if remainder >= 1:
+        practical += 1
+    
+    return {
+        "professional_experience": professional,
+        "theoretical_knowledge": theoretical,
+        "practical_application": practical
+    }
+
 def confirm_generation():
     """Üretimi onayla"""
     print("\n🚀 Üretimi başlat? (y/n): ", end="")
@@ -165,11 +210,7 @@ def generate_questions(generation_plan):
                 result = generator.generate_questions(
                     role_code=role_code,
                     salary_coefficient=difficulty,
-                    question_counts={
-                        "professional_experience": count // 3 + (1 if count % 3 > 0 else 0),
-                        "theoretical_knowledge": count // 3 + (1 if count % 3 > 1 else 0),
-                        "practical_application": count // 3
-                    }
+                    question_counts=calculate_question_distribution(count)
                 )
                 
                 if result.get("success", False):

@@ -18,42 +18,6 @@ Hazırlayacağın her soru, tek bir teknolojiye odaklanmalı ve net bir başlık
 
 Tüm çıktı, sana verilen formata uygun olarak, JSON yapısında döndürülmelidir. Görevin, bu yapıya tam uyarak açık, anlaşılır ve kurum ciddiyetine uygun mülakat soruları üretmektir."""
 
-# Ana prompt şablonu - mevcut projeden alınan ve yeni ihtiyaçlara uyarlanmış
-MAIN_PROMPT_TEMPLATE = """İlan Başlığı: {job_context}
-Pozisyon: {role_name}
-Maaş Katsayısı: {salary_coefficient}x
-Özel Şartlar: {description}
-
-Bu pozisyona ait {type_name} kategorisinde {question_number}. soruyu ve beklenen cevabını üret.
-
-Kod yazdırmak kesinlikle yasaktır. Soru içerisinde herhangi bir kod, algoritma, script, fonksiyon isteme ya da kod tamamlama ifadesi olmamalıdır. Adaydan sadece açıklama, analiz, yorum, yaklaşım veya deneyim paylaşımı beklenmelidir.
-
-Her soru özel şartlarda belirtilen farklı bir konuya odaklanmalıdır. Aynı konu başlığından birden fazla soru oluşturulmamalı, her soru pozisyonun farklı bir teknolojik alanına değinmelidir. Örneğin; bir soru React Native, bir diğeri Git, bir diğeri SOAP/REST üzerine olabilir.
-
-Soru zorluk seviyesi, maaş katsayısına göre belirlenen bilgi derinliğine uygun olmalıdır. {salary_coefficient}x seviyesi için aşağıdaki ağırlık dağılımına göre soru uygun katmandan seçilmelidir:
-
-- Temel Bilgi (%{K1}): Tanım, kavram açıklama (kod içermez)
-- Uygulamalı Bilgi (%{K2}): Konfigürasyon, yöntem, kullanım önerisi (kod içermez)
-- Hata Çözümleme (%{K3}): Log analizi, hata tespiti ve değerlendirme (kod içermez)
-- Tasarım (%{K4}): Mimari yapı, teknoloji karşılaştırması, ölçeklenebilirlik gibi konular
-- Stratejik (%{K5}): Süreç iyileştirme, teknoloji seçimi, karar gerekçesi gibi liderlik odaklı sorular
-
-Soru doğrudan, açık ve konuya odaklı olmalı; içinde ayrıca 'adayın bilgi vermesi beklenir' gibi tekrar eden ifadeler olmamalıdır. Bu açıklama beklenen cevap kısmında yapılacaktır.
-
-Beklenen cevap jüri için bilgilendirici tonda yazılmalı, adayın ağzından değil, gözlemleyen veya değerlendiren kişi diliyle ifade edilmelidir. Şu yapıda olmalıdır:
-
-"Adayın [seçilen konu] hakkında [beklenen bilgi/deneyim] göstermesi beklenir. [Detaylı açıklama ve örnekler]."
-
-Cevabın sonunda bir satır boşluk bırakılarak 4–5 anahtar kelime verilmelidir.
-
-Sonuç kesinlikle şu formatta JSON olarak döndürülmelidir (başka format kabul edilmez):
-
-{{
-  "question": "soru metni burada",
-  "expected_answer": "beklenen cevap burada\\n\\nAnahtar kelimeler: kelime1, kelime2, kelime3, kelime4"
-}}
-
-DİKKAT: Anahtar kelimeler expected_answer içinde olmalı, ayrı bir alan olmamalı!"""
 
 # Toplu soru üretimi için özel template
 BATCH_PROMPT_TEMPLATE = """İlan Başlığı: {job_context}
@@ -61,7 +25,7 @@ Pozisyon: {role_name}
 Maaş Katsayısı: {salary_coefficient}x
 Özel Şartlar: {description}
 
-Bu pozisyona ait {type_name} kategorisinde {question_count} adet soru ve beklenen cevaplarını üret.
+Bu pozisyona ait {type_name} kategorisinde ({type_description}) {question_count} adet soru ve beklenen cevaplarını üret.
 
 Kod yazdırmak kesinlikle yasaktır. Soru içerisinde herhangi bir kod, algoritma, script, fonksiyon isteme ya da kod tamamlama ifadesi olmamalıdır. Adaydan sadece açıklama, analiz, yorum, yaklaşım veya deneyim paylaşımı beklenmelidir.
 
@@ -117,40 +81,3 @@ Hiçbir açıklama, markdown, metin ekleme! Sadece aşağıdaki formatta JSON Ar
 - Direkt [ ile başla ] ile bitir!
 - {question_count} adet soru üret!
 - Anahtar kelimeler expected_answer içinde olsun!"""
-
-# Düzeltme prompt şablonu
-CORRECTION_PROMPT_TEMPLATE = """{job_context}
-
-ÖNCEKİ SORU:
-{original_question}
-
-DÜZELTME TALİMATI:
-{correction_instruction}
-
-Lütfen yukarıdaki soruyu düzeltme talimatına göre yeniden üret.
-Aynı format ve kalitede, sadece istenen değişiklikleri yap.
-
-🚫 KRİTİK KURAL: KESİNLİKLE KOD YAZDIRMA SORUSU SORMA! 🚫
-Bu kurala uymazsan soru reddedilecek!
-
-🚫 YASAK OLAN SORULAR:
-- "Şu kodu yazın/tamamlayın..."
-- "Bu fonksiyonu implement edin..."
-- "Kod örneği verin..."
-- "Bu algoritmayı kodlayın..."
-- "Script yazın..."
-
-Soru ve Cevap gereksinimleri:
-- Özel şartlardan BİR TEK KONU seçerek {type_name} alanında spesifik soru sor
-- Eğer düzeltme talimatında konu belirtilmişse o konuya odaklan
-- KESİNLİKLE KOD YAZDIRMA SORULMAYACAK!
-- Beklenen cevap jüriyi bilgilendirici tonda yazılmalı (adayın ağzından değil)
-- Beklenen cevap şu yapıda olmalı: "Adayın [seçilen konu] hakkında [beklenen bilgi/deneyim] göstermesi beklenir. [Detaylı açıklama ve örnekler]"
-- Beklenen cevabın sonuna bir satır boşluk bırakarak anahtar kelimeleri ekle
-- Kesinlikle şu JSON formatında döndür (başka format kabul edilmez):
-
-{{"question": "yeni soru", "expected_answer": "yeni cevap\\n\\nAnahtar kelimeler: kelime1, kelime2, kelime3, kelime4"}}
-
-DİKKAT: Anahtar kelimeler expected_answer içinde olmalı, ayrı alan olmamalı!
-
-Düzeltilmiş Soru ve Cevap:"""

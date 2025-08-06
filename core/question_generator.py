@@ -11,7 +11,7 @@ import re
 from typing import Dict, Any, List, Optional
 from openai import OpenAI
 
-from core.prompt_templates import SYSTEM_MESSAGE, MAIN_PROMPT_TEMPLATE, BATCH_PROMPT_TEMPLATE
+from core.prompt_templates import SYSTEM_MESSAGE, BATCH_PROMPT_TEMPLATE
 from core.json_parser import extract_question_data
 from config.rubric_system import get_difficulty_distribution_by_multiplier
 from config.openai_settings import get_openai_config, validate_api_key
@@ -76,6 +76,7 @@ class QuestionGenerator:
         salary_coefficient: int,
         question_type: str,
         type_name: str,
+        type_description: str,
         question_number: int = 1
     ) -> Dict[str, Any]:
         """
@@ -88,6 +89,7 @@ class QuestionGenerator:
             salary_coefficient: Maaş katsayısı (zorluk seviyesi)
             question_type: Soru tipi kodu
             type_name: Soru tipi ismi
+            type_description: Soru tipi açıklaması
             question_number: Soru numarası
             
         Returns:
@@ -97,14 +99,15 @@ class QuestionGenerator:
             # Zorluk dağılımını hesapla
             difficulty_distribution = get_difficulty_distribution_by_multiplier(salary_coefficient)
             
-            # Prompt'u oluştur
-            prompt = MAIN_PROMPT_TEMPLATE.format(
+            # Prompt'u oluştur (tek soru için BATCH_PROMPT_TEMPLATE kullan)
+            prompt = BATCH_PROMPT_TEMPLATE.format(
                 job_context=job_context,
                 role_name=role_name,
                 salary_coefficient=salary_coefficient,
                 description=description,
                 type_name=type_name,
-                question_number=question_number,
+                type_description=type_description,
+                question_count=1,  # Tek soru istiyoruz
                 K1=difficulty_distribution["K1_Temel_Bilgi"],
                 K2=difficulty_distribution["K2_Uygulamali"],
                 K3=difficulty_distribution["K3_Hata_Cozumleme"],
@@ -470,12 +473,13 @@ class QuestionGenerator:
                     for question_data in all_data[category_code]:
                         if isinstance(question_data, dict):
                             # Metadata ekle
+                            type_name, type_description = self._get_category_info(category_code)
                             question_result = {
                                 "success": True,
                                 "question": question_data.get("question", ""),
                                 "expected_answer": question_data.get("expected_answer", ""),
                                 "question_type": category_code,
-                                "type_name": self._get_category_name(category_code),
+                                "type_name": type_name,
                                 "role": "",  # Daha sonra doldurulacak
                                 "salary_coefficient": 0,  # Daha sonra doldurulacak
                                 "difficulty_distribution": {},  # Daha sonra doldurulacak
@@ -501,14 +505,14 @@ class QuestionGenerator:
             logger.error(f"All questions parse genel hatası: {e}")
             return {}
     
-    def _get_category_name(self, category_code: str) -> str:
-        """Kategori kodundan kategori ismini al"""
-        category_map = {
-            "professional_experience": "Mesleki Deneyim Soruları",
-            "theoretical_knowledge": "Teorik Bilgi Soruları", 
-            "practical_application": "Pratik Uygulama Soruları"
-        }
-        return category_map.get(category_code, category_code)
+    def _get_category_info(self, category_code: str) -> tuple:
+        """Kategori kodundan kategori ismi ve açıklamasını al"""
+        from config.question_categories import get_category_config
+        try:
+            config = get_category_config(category_code)
+            return config["name"], config["description"]
+        except KeyError:
+            return category_code, "Kategori açıklaması bulunamadı"
     
     def generate_all_questions_single_request(
         self,
@@ -541,7 +545,7 @@ class QuestionGenerator:
             category_details = []
             total_questions = 0
             
-            for category_code, category_name in active_categories:
+            for category_code, category_name, category_description in active_categories:
                 count = question_counts.get(category_code, 0)
                 if count > 0:
                     category_details.append(f"- {category_name}: {count} adet soru")
@@ -664,7 +668,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
             
             logger.info("KATEGORİ BAZLI sistem başlıyor - her kategori için ayrı API isteği")
             
-            for category_code, category_name in active_categories:
+            for category_code, category_name, category_description in active_categories:
                 question_count = question_counts.get(category_code, 0)
                 
                 if question_count <= 0:
@@ -681,6 +685,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
                     salary_coefficient=salary_coefficient,
                     question_type=category_code,
                     type_name=category_name,
+                    type_description=category_description,
                     question_count=question_count
                 )
                 
@@ -807,6 +812,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
         salary_coefficient: int,
         question_type: str,
         type_name: str,
+        type_description: str,
         question_count: int
     ) -> Dict[str, Any]:
         """
@@ -819,6 +825,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
             salary_coefficient: Maaş katsayısı
             question_type: Soru kategorisi kodu
             type_name: Soru kategorisi ismi
+            type_description: Soru kategorisi açıklaması
             question_count: Üretilecek soru sayısı
             
         Returns:
@@ -835,6 +842,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
                 salary_coefficient=salary_coefficient,
                 description=description,
                 type_name=type_name,
+                type_description=type_description,
                 question_count=question_count,
                 K1=difficulty_distribution["K1_Temel_Bilgi"],
                 K2=difficulty_distribution["K2_Uygulamali"],
@@ -959,7 +967,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
         else:
             logger.error("TEK İSTEK başarısız, kategori bazlı fallback...")
             # Fallback: Kategori bazlı üretim
-            for category_code, category_name in active_categories:
+            for category_code, category_name, category_description in active_categories:
                 question_count = question_counts.get(category_code, 0)
                 
                 if question_count <= 0:
@@ -974,6 +982,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
                     salary_coefficient=salary_coefficient,
                     question_type=category_code,
                     type_name=category_name,
+                    type_description=category_description,
                     question_count=question_count
                 )
                 

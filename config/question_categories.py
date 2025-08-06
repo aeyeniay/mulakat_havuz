@@ -9,19 +9,19 @@ Mevcut projeden alınan soru kategorileri ve soru tiplerinin tanımları.
 QUESTION_CATEGORIES = {
     "professional_experience": {
         "name": "Mesleki Deneyim Soruları",
-        "description": "Adayın geçmiş deneyimleri ve pratik bilgilerini değerlendiren sorular",
+        "description": "Adayın geçmiş deneyimlerine, projelerine, ekip içi görevlerine ve sektördeki aktifliğine dair sorular.",
         "order_index": 1,
         "is_active": True
     },
     "theoretical_knowledge": {
         "name": "Teorik Bilgi Soruları", 
-        "description": "Temel kavramlar, tanımlar ve teorik bilgi seviyesini ölçen sorular",
+        "description": "Pozisyonla ilgili kavramlar, protokoller, standartlar, mimariler veya güvenlik yaklaşımları gibi teorik konularda bilgi ölçen sorular.",
         "order_index": 2,
         "is_active": True
     },
     "practical_application": {
         "name": "Pratik Uygulama Soruları",
-        "description": "Gerçek senaryolar ve uygulama becerilerini değerlendiren sorular",
+        "description": "Gerçek dünya senaryolarında çözüm üretmeyi gerektiren, uygulama temelli sorular. Problem durumu, vaka analizi veya sistem yapılandırma senaryosu içerebilir.",
         "order_index": 3,
         "is_active": True
     }
@@ -32,10 +32,10 @@ def get_active_question_categories() -> list:
     Aktif soru kategorilerini döndür.
     
     Returns:
-        list: [(kod, isim)] formatında kategori listesi
+        list: [(kod, isim, açıklama)] formatında kategori listesi
     """
     active_categories = [
-        (code, config["name"]) 
+        (code, config["name"], config["description"]) 
         for code, config in QUESTION_CATEGORIES.items() 
         if config["is_active"]
     ]
