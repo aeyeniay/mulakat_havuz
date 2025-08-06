@@ -9,19 +9,19 @@ Mevcut projeden alınan soru kategorileri ve soru tiplerinin tanımları.
 QUESTION_CATEGORIES = {
     "professional_experience": {
         "name": "Mesleki Deneyim Soruları",
-        "description": "Adayın geçmiş deneyimlerine, projelerine, ekip içi görevlerine ve sektördeki aktifliğine dair sorular.",
+        "description": "Adayın geçmişte yaşadığı projeler, ekip içindeki rolü, karşılaştığı zorluklar ve bunlara yaklaşımı hakkında bilgi edinmeyi amaçlar. Somut örnekler, kişisel katkılar ve sonuç odaklı anlatımlar aranır. Gerçek deneyim paylaşımı, başarı/başarısızlık durumları sorgulanabilir.",
         "order_index": 1,
         "is_active": True
     },
     "theoretical_knowledge": {
         "name": "Teorik Bilgi Soruları", 
-        "description": "Pozisyonla ilgili kavramlar, protokoller, standartlar, mimariler veya güvenlik yaklaşımları gibi teorik konularda bilgi ölçen sorular.",
+        "description": "Pozisyonla ilgili kavram, yöntem, standart, protokol ya da teknolojilere dair temel bilgi düzeyini ölçen sorulardır. Adaydan tanım yapması, teknik bir yapıyı açıklaması veya iki kavramı karşılaştırması beklenir. Kod içermez; soyut bilgi temellidir.",
         "order_index": 2,
         "is_active": True
     },
     "practical_application": {
         "name": "Pratik Uygulama Soruları",
-        "description": "Gerçek dünya senaryolarında çözüm üretmeyi gerektiren, uygulama temelli sorular. Problem durumu, vaka analizi veya sistem yapılandırma senaryosu içerebilir.",
+        "description": "Gerçek dünyadaki bir durumu çözümlemeyi veya yapılandırmayı gerektiren uygulamalı senaryo sorularıdır. Adaydan bir problem durumu karşısında ne yapacağını anlatması, alternatif çözüm yollarını değerlendirmesi beklenir. Kurgusal ama gerçekçi vaka, yapılandırma, süreç tasarımı gibi konular içerebilir.",
         "order_index": 3,
         "is_active": True
     }
