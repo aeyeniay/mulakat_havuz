@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: mulakat_soru_havuzu:latest
+    container_name: mulakat_soru_havuzu
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PYTHONPATH=/app
+      - TZ=Europe/Istanbul
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+      - .:/app
+    command: ["--help"]
