@@ -1,24 +1,59 @@
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-.venv/
-venv/
-
-# Env
-.env
-
-# Editors/OS
-.DS_Store
-.idea/
-.vscode/
-
-# Build/Dist
+*$py.class
+*.so
+.Python
 build/
+develop-eggs/
 dist/
-.coverage
-.pytest_cache/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Data outputs
-data/generated_questions/*
-data/word_exports/*
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+*.log
+.env
+config/api_keys.py
+
+# Generated files
+data/generated_questions/
+data/word_exports/*.docx
+!data/word_exports/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp

@@ -15,13 +15,13 @@ QUESTION_CATEGORIES = {
     },
     "theoretical_knowledge": {
         "name": "Teorik Bilgi Soruları", 
-        "description": "Pozisyonla ilgili kavram, yöntem, standart, protokol ya da teknolojilere dair temel bilgi düzeyini ölçen sorulardır. Adaydan tanım yapması, teknik bir yapıyı açıklaması veya iki kavramı karşılaştırması beklenir. Kod içermez; soyut bilgi temellidir.",
+        "description": "Bu tip sorular, adayın belirli bir teknoloji veya kavram hakkındaki temel bilgisini, bileşenlerini ve çalışma mantığını net biçimde aktarabilmesini hedefler. Soru metni içinde “tanım, bileşenler, karşılaştırma, kullanım, risk” gibi odak noktaları açıkça belirtilir. Adayın, sadece kavramı tanımlamakla kalmayıp alternatiflerle farklarını açıklaması, hangi senaryolarda tercih edileceğini ve olası risk veya sınırlamaları değerlendirmesi beklenir. Böylece hem kavramsal derinlik hem de karşılaştırmalı analiz yapma yeteneği ölçülür.",
         "order_index": 2,
         "is_active": True
     },
     "practical_application": {
         "name": "Pratik Uygulama Soruları",
-        "description": "Gerçek dünyadaki bir durumu çözümlemeyi veya yapılandırmayı gerektiren uygulamalı senaryo sorularıdır. Adaydan bir problem durumu karşısında ne yapacağını anlatması, alternatif çözüm yollarını değerlendirmesi beklenir. Kurgusal ama gerçekçi vaka, yapılandırma, süreç tasarımı gibi konular içerebilir.",
+        "description": "Bu tip sorular, gerçek hayattan alınmış veya kurgu bir operasyonel senaryoya dayanır ve adayın problem çözme yaklaşımını anlamayı amaçlar. Soru, “Senaryo, Amaç, Kısıtlar, Değerlendirme Ölçütleri” gibi etiketlerle yapılandırılır. Adaydan komut veya kod yazması istenmez; bunun yerine adım adım çözüm planı, uygun araç veya yöntem seçimi, izleme ve doğrulama süreçleri ile risk ve geri dönüş planı sunması beklenir. Bu şekilde, adayın teorik bilgiyi pratikte uygulama becerisi ölçülür.",
         "order_index": 3,
         "is_active": True
     }
