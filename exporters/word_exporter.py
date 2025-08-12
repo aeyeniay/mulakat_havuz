@@ -69,6 +69,15 @@ class WordExporter:
         answer_style.font.size = Pt(10)
         answer_style.paragraph_format.space_after = Pt(8)
         answer_style.paragraph_format.left_indent = Inches(0.25)
+
+        # Kod stilleri (tek satır veya çok satır kod blokları için)
+        code_style = self.document.styles.add_style('Custom Code', WD_STYLE_TYPE.PARAGRAPH)
+        code_style.font.name = 'Consolas'
+        code_style.font.size = Pt(10)
+        code_style.font.bold = False
+        # 3 boşluk kadar görsel girinti yaklaşığı: küçük bir sol iç boşluk
+        code_style.paragraph_format.left_indent = Inches(0.2)
+        code_style.paragraph_format.space_after = Pt(0)
     
     def export_questions(
         self,
@@ -197,23 +206,311 @@ class WordExporter:
                 if not question_data.get("success", False):
                     continue
                 
-                self._add_single_question(i, question_data)
+                self._add_single_question(category_code, i, question_data)
             
             self.document.add_paragraph()  # Kategori arası boşluk
     
-    def _add_single_question(self, question_number: int, question_data: Dict[str, Any]):
+    def _add_single_question(self, category_code: str, question_number: int, question_data: Dict[str, Any]):
         """Tek bir soruyu ekle"""
         question_text = question_data.get("question", "Soru metni eksik")
         expected_answer = question_data.get("expected_answer", "Beklenen cevap eksik")
-        
-        # Soru başlığı ve metni
-        question_para = self.document.add_paragraph(f"{question_number}. {question_text}", style='Custom Question')
-        
+
+        # Soru metni ile olası kod bloğunu ayır
+        clean_question, code_block = self._split_question_and_code(question_text)
+
+        # Soru başlığı ve metni (bold)
+        self.document.add_paragraph(f"{question_number}. {clean_question}", style='Custom Question')
+
+        # Kod bloğu sadece 'practical_application' kategorisinde yazılsın
+        if code_block and category_code == 'practical_application':
+            # Görselleştirme öncesi kodu normalize et (kaçışları düzelt, eksik kapatmaları tamamla)
+            code_block = self._normalize_code_block_for_display(code_block)
+            self.document.add_paragraph("")  # Boş satır
+            # Dil tespiti ve başlık satırı
+            language = self._detect_code_language(code_block)
+            lang_para = self.document.add_paragraph(style='Custom Code')
+            lang_run = lang_para.add_run(f"   [Dil: {language}]")
+            lang_run.bold = False
+            for line in code_block.splitlines():
+                code_para = self.document.add_paragraph(style='Custom Code')
+                run = code_para.add_run(f"   {line.rstrip()}")
+                run.bold = False
+            # Kod ile cevap arasında bir boş satır
+            self.document.add_paragraph("")
+
         # Beklenen cevap
         if expected_answer:
-            answer_para = self.document.add_paragraph(f"Beklenen Cevap: {expected_answer}", style='Custom Answer')
-        
+            self.document.add_paragraph(f"Beklenen Cevap: {expected_answer}", style='Custom Answer')
+
         self.document.add_paragraph()  # Soru arası boşluk
+
+    def _split_question_and_code(self, question_text: str) -> tuple:
+        """Soru metninden olası kod bloğunu ayır.
+
+        Varsayım: Kod sorularında, soru cümlesini ilk satır oluşturur ve
+        bunu takip eden satırlar kod satırlarıdır. Kod, markdown blokları
+        olmadan düz metindir ve satırlar \n ile ayrılır.
+
+        Returns:
+            (clean_question, code_block)  
+            code_block None ise kod bulunmamıştır.
+        """
+        if not question_text:
+            return "Soru metni eksik", None
+
+        lines = [ln for ln in question_text.splitlines()]
+        if len(lines) <= 1:
+            return question_text.strip(), None
+
+        first = lines[0].strip()
+        candidate = "\n".join(lines[1:]).strip()
+
+        if self._looks_like_code_block(candidate):
+            return first, candidate
+
+        # Kod gibi görünmüyor; tüm metni tek soru kabul et
+        return question_text.strip(), None
+
+    def _looks_like_code_block(self, text: str) -> bool:
+        """Basit sezgisel kontrollerle bir metnin kod olup olmadığını tahmin et."""
+        if not text:
+            return False
+
+        code_indicators = [
+            # Yaygın anahtar kelimeler
+            r"^\s*(for|if|while|def|class|try|catch|public|private|protected|static|using|import|from)\b",
+            r"\bConsole\.",
+            r"\bprint\(",
+            r"\bSystem\.",
+            r"\bvar\s+\w+\s*=",
+            r"\blet\s+\w+\s*=",
+            r"\bconst\s+\w+\s*=",
+            r"\bNew-[A-Za-z]+\b",   # PowerShell
+            r"\bGet-[A-Za-z]+\b",
+            r"\bSet-[A-Za-z]+\b",
+            r"SELECT\s+.+\s+FROM",
+            r"CREATE\s+TABLE",
+            r"INSERT\s+INTO",
+            r"UPDATE\s+\w+\s+SET",
+            r"DELETE\s+FROM",
+            # Semboller
+            r"[{};=()<>\[\]]",
+            r":\s*$",  # Python bloğu
+        ]
+
+        import re
+        lines = [ln for ln in text.splitlines() if ln.strip()]
+        if not lines:
+            return False
+
+        # Eğer iki veya daha fazla satır varsa ve en az bir satırda belirgin kod göstergesi varsa
+        indicator_regexes = [re.compile(pat, re.IGNORECASE) for pat in code_indicators]
+        hits = 0
+        for ln in lines:
+            if any(r.search(ln) for r in indicator_regexes):
+                hits += 1
+        return hits >= 1 and len(lines) >= 1
+
+    def _normalize_code_block_for_display(self, text: str) -> str:
+        """Kod bloğunu Word çıktısı için güvenli ve mümkün olduğunca tam hale getirir.
+
+        - Yaygın kaçışları çözer (\\\", \\')
+        - \n literallerini gerçek satır sonlarına çevirir
+        - Parantez/ayraç ve çift tırnakları dengelemeye çalışır
+        - Console.WriteLine( … ) gibi yaygın kalıpları kapatır
+        """
+        import re
+        if not text:
+            return text
+        # Kaçışları çöz
+        normalized = text.replace('\\"', '"').replace("\\'", "'")
+        # \n literalini gerçek yeni satıra çevir
+        normalized = normalized.replace('\\n', '\n')
+
+        # Satır bazlı düzeltmeler
+        lines = [ln.rstrip() for ln in normalized.splitlines()]
+        fixed_lines = []
+        for ln in lines:
+            # Console.WriteLine veya benzeri açık parantezle kalan kalıplar
+            if re.search(r"Console\.Write(Line|)\s*\(.*$", ln) and not re.search(r"\)\s*;\s*$", ln):
+                # Kapanışı ekle
+                if ln.endswith('(') or ln.endswith('( '):
+                    ln = ln + ')'
+                if not ln.endswith(')'):
+                    # Eksik ) varsa ekle
+                    open_paren = ln.count('(') - ln.count(')')
+                    ln = ln + (')' * max(open_paren, 1))
+                if not ln.strip().endswith(';'):
+                    ln = ln + ';'
+            # Satır içinde tek sayıda çift tırnak varsa kapat
+            if ln.count('"') % 2 == 1:
+                ln = ln + '"'
+            fixed_lines.append(ln)
+
+        normalized = '\n'.join(fixed_lines)
+
+        # Blok seviyesinde ayraç dengeleme: (), {}, []
+        def balance(block: str, open_ch: str, close_ch: str) -> str:
+            count = block.count(open_ch) - block.count(close_ch)
+            if count > 0:
+                return block + (close_ch * count)
+            return block
+
+        normalized = balance(normalized, '(', ')')
+        normalized = balance(normalized, '{', '}')
+        normalized = balance(normalized, '[', ']')
+        return normalized
+
+    def _detect_code_language(self, text: str) -> str:
+        """
+        İlanda adı geçen dillerle sınırlı dil tespiti.
+        Olası dönüşler: C#, JavaScript, PowerShell, Bash, Python, Perl, PHP, VBScript,
+                        SQL, T-SQL, PL/pgSQL, HTML, CSS
+        Öncelik: (1) fenced tag / shebang, (2) ipucu puanlama, (3) yakın skor çözümü.
+        """
+        import re
+
+        if not text or not text.strip():
+            return "Belirlenemedi"
+
+        t = text.strip()
+        tl = t.lower()
+
+        # -------- 0) ```lang ...``` dil etiketi
+        fence = re.search(r"```+\s*([a-zA-Z0-9_+\-#]+)", t)
+        if fence:
+            tag = fence.group(1).lower()
+            tag_map = {
+                "c#": "C#", "csharp": "C#", "cs": "C#", "dotnet": "C#",
+                "js": "JavaScript", "javascript": "JavaScript", "node": "JavaScript", "jsx": "JavaScript", "tsx": "JavaScript",
+                "ps": "PowerShell", "ps1": "PowerShell", "powershell": "PowerShell",
+                "bash": "Bash", "sh": "Bash", "shell": "Bash",
+                "py": "Python", "python": "Python",
+                "pl": "Perl", "perl": "Perl",
+                "php": "PHP",
+                "vbs": "VBScript", "vbscript": "VBScript",
+                "sql": "SQL", "tsql": "T-SQL", "mssql": "T-SQL", "plpgsql": "PL/pgSQL", "pgsql": "PL/pgSQL", "postgresql": "PL/pgSQL",
+                "html": "HTML", "html5": "HTML",
+                "css": "CSS", "css3": "CSS"
+            }
+            if tag in tag_map:
+                return tag_map[tag]
+
+        # -------- 1) Shebang (#!) kontrolü
+        first = tl.splitlines()[0].strip()
+        if first.startswith("#!"):
+            if "python" in first:
+                return "Python"
+            if "powershell" in first or "pwsh" in first:
+                return "PowerShell"
+            if "bash" in first or first.endswith("/sh"):
+                return "Bash"
+            if "php" in first:
+                return "PHP"
+            if "perl" in first:
+                return "Perl"
+            if "node" in first:
+                return "JavaScript"
+
+        # -------- 2) Puanlama tabanlı sezgi
+        score = {k: 0 for k in [
+            "C#", "JavaScript", "PowerShell", "Bash", "Python", "Perl", "PHP", "VBScript",
+            "SQL", "T-SQL", "PL/pgSQL", "HTML", "CSS"
+        ]}
+
+        def add(lang, pts): score[lang] += pts
+
+        # C#
+        if re.search(r"\busing\s+system(\.\w+)*\s*;", tl): add("C#", 3)
+        if re.search(r"\bnamespace\s+\w+|\bclass\s+\w+", t): add("C#", 3)
+        if re.search(r"\bConsole\.Write(Line|)\s*\(", t): add("C#", 2)
+        if re.search(r"\bpublic\s+(static\s+)?(async\s+)?(Task|void|int|string|bool|IActionResult|ActionResult)\b", t): add("C#", 3)
+        if re.search(r"\b(List|Dictionary|IEnumerable|IQueryable)<", t): add("C#", 2)
+        if re.search(r"\[\s*Http(Get|Post|Put|Delete)\s*\]", t): add("C#", 3)  # ASP.NET attribute
+
+        # JavaScript (JSX/Node/jQuery dâhil; TS ipuçlarını JS say)
+        if re.search(r"\bconsole\.log\s*\(|\b(function|async)\s*\w*\s*\(|=>", t): add("JavaScript", 3)
+        if re.search(r"\b(const|let|var)\s+\w+\s*=", t): add("JavaScript", 2)
+        if re.search(r"\b(import\s+.*\s+from\s+['\"])|(export\s+(default|const|function|class))", t): add("JavaScript", 2)
+        if re.search(r"\brequire\s*\(|\bmodule\.exports\b", t): add("JavaScript", 2)
+        if re.search(r"\$\(\s*['\"][^'\"]+['\"]\s*\)", t): add("JavaScript", 2)  # jQuery
+        if re.search(r"\buse(State|Effect|Memo|Callback)\s*\(|React\.", t): add("JavaScript", 3)  # React/JSX
+        # TS izleri (JS'ye puan)
+        if re.search(r":\s*(string|number|boolean|any|unknown|Array<)|\binterface\s+\w+", t): add("JavaScript", 1)
+        if re.search(r"@Component\s*\(|@Injectable\s*\(", t): add("JavaScript", 1)  # Angular
+
+        # PowerShell
+        if re.search(r"\b(New|Get|Set|Remove|Write|Test|Start|Stop|Enable|Disable|Add|Clear|Select|Export|Import)-[A-Za-z]+\b", t): add("PowerShell", 3)
+        if re.search(r"\$\w+(\.\w+)?\s*=|\$env:[A-Za-z_]\w*", t): add("PowerShell", 2)
+        if re.search(r"\bparam\s*\(|\[[A-Za-z]+\]\s*\$", t): add("PowerShell", 2)
+
+        # Bash
+        if re.search(r"\b(echo|grep|sed|awk|cut|tr|cat|tail|head|chmod|chown|tar|apt|yum|dnf)\b", tl): add("Bash", 2)
+        if re.search(r"\bfor\s+\w+\s+in\b|\bwhile\s*\[\[|\bif\s*\[\[", tl): add("Bash", 2)
+        if re.search(r"^[A-Za-z_]\w*=\S+", t, re.M): add("Bash", 1)
+        if re.search(r"\$\{?[A-Za-z_]\w*\}?", t): add("Bash", 1)
+
+        # Python
+        if re.search(r"^\s*def\s+\w+\(.*\):", t, re.M): add("Python", 3)
+        if re.search(r"\bimport\s+\w+|\bfrom\s+\w+\s+import\b", t): add("Python", 2)
+        if re.search(r"\bprint\s*\(", t): add("Python", 1)
+        if re.search(r"\bif\s+__name__\s*==\s*['\"]__main__['\"]", t): add("Python", 2)
+
+        # Perl
+        if re.search(r"\buse\s+strict;|\buse\s+warnings;", t): add("Perl", 2)
+        if re.search(r"\bmy\s+\$\w+", t): add("Perl", 3)
+        if re.search(r"\bsub\s+\w+\s*\{", t): add("Perl", 2)
+
+        # PHP
+        if re.search(r"<\?php", t): add("PHP", 4)
+        if re.search(r"\becho\s+\$|\$this->|\bfunction\s+\w+\s*\(", t): add("PHP", 2)
+
+        # VBScript
+        if re.search(r"\bWScript\.(Echo|CreateObject)\b", t): add("VBScript", 3)
+        if re.search(r"\bDim\s+\w+|\bSet\s+\w+\s*=", t): add("VBScript", 2)
+        if re.search(r"\b(Sub|Function)\s+\w+\s*\(|\bEnd\s+(Sub|Function)\b", t): add("VBScript", 2)
+
+        # SQL (genel)
+        if re.search(r"\bselect\b[\s\S]+?\bfrom\b", tl): add("SQL", 2)
+        if re.search(r"\binsert\s+into\b|\bupdate\b\s+\w+\s+set\b|\bdelete\s+from\b", tl): add("SQL", 2)
+        if re.search(r"\bcreate\s+(table|view|procedure|function|index)\b|\balter\s+|drop\s+", tl): add("SQL", 2)
+
+        # T-SQL (MSSQL)
+        if re.search(r"\bDECLARE\s+@\w+|\bPRINT\b|\bEXEC\s+\w+|\bTRY\s+BEGIN\b|\bGO\s*$", t, re.M): add("T-SQL", 3)
+        if re.search(r"\b(NVAR)?CHAR\(|\bDATETIME\b|\bTOP\s+\d+|\bWITH\s*\(\s*NOLOCK\s*\)", t): add("T-SQL", 2)
+
+        # PL/pgSQL (PostgreSQL)
+        if re.search(r"CREATE\s+OR\s+REPLACE\s+FUNCTION\b[\s\S]+RETURNS\b[\s\S]+LANGUAGE\s+plpgsql", t, re.I): add("PL/pgSQL", 4)
+        if re.search(r"\bRAISE\s+(NOTICE|EXCEPTION)\b|\bPERFORM\b|\bRETURN\s+QUERY\b", t): add("PL/pgSQL", 3)
+        if re.search(r"\$\$[\s\S]+\$\$|::\w+\b", t): add("PL/pgSQL", 2)
+
+        # HTML
+        if re.search(r"<(html|head|body|div|span|a|ul|ol|li|p|h[1-6]|script|link|meta)\b", tl): add("HTML", 3)
+        if re.search(r"</(html|body|div|span|a|ul|ol|li|p|h[1-6])>", tl): add("HTML", 2)
+
+        # CSS
+        if re.search(r"\b(color|margin|padding|display|position|font(-size)?|background(-color)?)\s*:", tl): add("CSS", 2)
+        if re.search(r"[.#][A-Za-z_][\w\-]*\s*\{[^}]*\}", t): add("CSS", 2)
+
+        # -------- 3) Sonuç seçimi ve yakın skor çözümü
+        # Dialectler genel SQL'i bastırsın
+        if score["T-SQL"] >= max(score["SQL"], 1) + 1:
+            best = "T-SQL"
+        elif score["PL/pgSQL"] >= max(score["SQL"], 1) + 1:
+            best = "PL/pgSQL"
+        else:
+            # En yüksek puanı seç
+            best = max(score, key=score.get)
+
+        # JS/HTML çakışması: JSX izleri varsa JS'i tercih et
+        if best == "HTML":
+            if re.search(r"\b(import|export|const|let|var|=>|React\.)", t) and "<" in t and ">" in t:
+                best = "JavaScript"
+
+        # Hiç ipucu yoksa
+        if score[best] == 0:
+            return "Belirlenemedi"
+        return best
     
     def _add_document_footer(self):
         """Belge alt bilgisini ekle"""

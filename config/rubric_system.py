@@ -32,38 +32,30 @@ def get_difficulty_distribution_by_multiplier(salary_multiplier):
             "K4_Tasarim": 20,          # Mimarî karşılaştırma
             "K5_Stratejik": 0          # Henüz yok
         }
-    elif salary_multiplier <= 4:  # 4x – Takım Lideri (Senior)
+    else:  # 4x – Takım Lideri (Senior)
         return {
-            "K1_Temel_Bilgi": 5,       # Temel bilgi çok az
-            "K2_Uygulamali": 15,       # Stratejik uygulama
-            "K3_Hata_Cozumleme": 25,   # Derinlemesine analiz
-            "K4_Tasarim": 35,          # Mimarî kararlar
-            "K5_Stratejik": 20         # Liderlik, süreç kararı
-        }
-    else:  # 5x+ – Stratejik Liderlik
-        return {
-            "K1_Temel_Bilgi": 5,       # Minimal
-            "K2_Uygulamali": 10,       # Üst seviye uygulama
-            "K3_Hata_Cozumleme": 20,   # Enterprise düzey hata çözüm
-            "K4_Tasarim": 30,          # Büyük ölçekli mimari
-            "K5_Stratejik": 35         # Roadmap, stratejik kararlar
+            "K1_Temel_Bilgi": 5,
+            "K2_Uygulamali": 15,
+            "K3_Hata_Cozumleme": 25,
+            "K4_Tasarim": 35,
+            "K5_Stratejik": 20
         }
 
 # Rübrik seviyeleri tanımları
 RUBRIC_LEVELS = {
     "K1_Temel_Bilgi": {
         "name": "Temel Bilgi",
-        "description": "Tanım, kavram açıklama (kod içermez)",
-        "focus": ["temel_kavramlar", "definisyonlar", "terminoloji"]
+        "description": "Tanım, kavram açıklama",
+        "focus": ["temel_kavramlar", "tanımlar", "terminoloji"]
     },
     "K2_Uygulamali": {
         "name": "Uygulamalı Bilgi", 
-        "description": "Konfigürasyon, yöntem, kullanım önerisi (kod içermez)",
+        "description": "Konfigürasyon, yöntem, kullanım önerisi",
         "focus": ["konfigurasyon", "metodoloji", "uygulama_ornekleri"]
     },
     "K3_Hata_Cozumleme": {
         "name": "Hata Çözümleme",
-        "description": "Log analizi, hata tespiti ve değerlendirme (kod içermez)",
+        "description": "Log analizi, hata tespiti ve değerlendirme",
         "focus": ["log_analizi", "hata_tespiti", "troubleshooting"]
     },
     "K4_Tasarim": {
@@ -82,6 +74,5 @@ RUBRIC_LEVELS = {
 DIFFICULTY_LABELS = {
     2: {"name": "Junior", "label": "2x", "description": "Temel seviye"},
     3: {"name": "Mid", "label": "3x", "description": "Orta seviye"},
-    4: {"name": "Senior", "label": "4x", "description": "İleri seviye"},
-    5: {"name": "Lead", "label": "5x", "description": "Liderlik seviye"}
+    4: {"name": "Senior", "label": "4x", "description": "İleri seviye"}
 }

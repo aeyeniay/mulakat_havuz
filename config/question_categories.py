@@ -21,7 +21,7 @@ QUESTION_CATEGORIES = {
     },
     "practical_application": {
         "name": "Pratik Uygulama Soruları",
-        "description": "Bu tip sorular, gerçek hayattan alınmış veya kurgu bir operasyonel senaryoya dayanır ve adayın problem çözme yaklaşımını anlamayı amaçlar. Soru, “Senaryo, Amaç, Kısıtlar, Değerlendirme Ölçütleri” gibi etiketlerle yapılandırılır. Adaydan komut veya kod yazması istenmez; bunun yerine adım adım çözüm planı, uygun araç veya yöntem seçimi, izleme ve doğrulama süreçleri ile risk ve geri dönüş planı sunması beklenir. Bu şekilde, adayın teorik bilgiyi pratikte uygulama becerisi ölçülür.",
+        "description": "Gerçek hayattan alınmış kısa, doğrudan operasyonel konulara odaklanır; adayın problem çözme yaklaşımını ölçer. GEREKTİĞİNDE 5–10 satırlık kod içeren 'kodun ne yaptığı' veya 'koddaki hatayı bulma' tarzı sorular da bu kategoriye dahildir; adaydan kod yazması istenmez.",
         "order_index": 3,
         "is_active": True
     }

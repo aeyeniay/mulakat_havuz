@@ -360,6 +360,37 @@ class QuestionGenerator:
         
         return json_text
     
+    def _is_code_like(self, text: str) -> bool:
+        """Bir metnin kod benzeri içerik taşıyıp taşımadığını sezgisel olarak tespit et."""
+        if not text:
+            return False
+        indicators = [
+            r"```", r";\s*$", r"\bclass\s+\w+", r"\bdef\s+\w+\s*\(", r"\bfunction\s*\(",
+            r"Console\.WriteLine", r"using\s+\w+;", r"public\s+(static\s+)?(void|int|string|class)",
+            r"\bvar\s+\w+\s*=", r"\blet\s+\w+\s*=", r"\bconst\s+\w+\s*=",
+            r"SELECT\s+.+\s+FROM", r"INSERT\s+INTO", r"UPDATE\s+\w+\s+SET", r"DELETE\s+FROM",
+            r"CREATE\s+TABLE", r"\b(New|Get|Set)-[A-Za-z]+", r"^[\s\t]*[{}]$",
+        ]
+        for pat in indicators:
+            if re.search(pat, text, re.IGNORECASE | re.MULTILINE):
+                return True
+        # Çok sayıda parantez/operatör içeren kısa satırlar
+        symbol_hits = len(re.findall(r"[{}();=<>\[\]]", text))
+        return symbol_hits >= 3
+
+    def _sanitize_non_practical_question(self, text: str) -> str:
+        """Pratik olmayan kategoriler için sorudan olası kod parçasını temizle."""
+        if not text:
+            return text
+        # Kod çitlerini sil
+        text = re.sub(r"```[\s\S]*?```", "", text)
+        # Çok satırlı ise yalnızca ilk satırı al
+        first_line = text.splitlines()[0].strip()
+        # Halen kod gibi görünüyorsa güvenli bir mesleki deneyim sorusuna indir
+        if self._is_code_like(first_line):
+            return "Bu konuda edindiğiniz deneyiminizi, karşılaştığınız zorlukları ve yaklaşımınızı anlatınız."
+        return first_line
+
     def _try_parse_nested_json(self, generated_text: str) -> List[Dict[str, Any]]:
         """
         AI'ın question field'ında JSON Array döndürdüğü durum için parser
@@ -419,6 +450,229 @@ class QuestionGenerator:
             logger.error(f"Nested JSON parse hatası: {e}")
             return []
     
+    def _try_repair_corrupted_json(self, generated_text: str) -> List[Dict[str, Any]]:
+        """AI'ın JSON string olarak döndürdüğü durumu düzelt"""
+        try:
+            logger.info("🔧 Corrupted JSON repair başlıyor...")
+            
+            # JSON string içinde JSON Array arama
+            patterns = [
+                r'\[\s*\{\s*"question".*?\]\s*',  # JSON Array pattern
+                r'"question":\s*"\[.*?\]"',        # String içinde JSON Array
+            ]
+            
+            for pattern in patterns:
+                matches = re.finditer(pattern, generated_text, re.DOTALL)
+                for match in matches:
+                    json_candidate = match.group(0)
+                    
+                    # String escape'lerini düzelt
+                    if json_candidate.startswith('"') and json_candidate.endswith('"'):
+                        json_candidate = json_candidate[1:-1]  # Dış tırnakları kaldır
+                    
+                    # Escape karakterlerini düzelt
+                    json_candidate = json_candidate.replace('\\"', '"')
+                    json_candidate = json_candidate.replace('\\n', '\n')
+                    
+                    try:
+                        # JSON parse dene
+                        data = json.loads(json_candidate)
+                        if isinstance(data, list):
+                            return self._format_questions_array(data)
+                    except:
+                        continue
+            
+            # Manuel string parse (son çare)
+            return self._manual_question_extract(generated_text)
+            
+        except Exception as e:
+            logger.error(f"Corrupted JSON repair hatası: {e}")
+            return []
+    
+    def _manual_question_extract(self, text: str) -> List[Dict[str, Any]]:
+        """Manuel olarak question/expected_answer çiftlerini çıkar"""
+        try:
+            questions = []
+            
+            # "question": "..." pattern'ini bul
+            question_pattern = r'"question":\s*"([^"]*(?:\\.[^"]*)*)"'
+            answer_pattern = r'"expected_answer":\s*"([^"]*(?:\\.[^"]*)*)"'
+            
+            question_matches = re.findall(question_pattern, text)
+            answer_matches = re.findall(answer_pattern, text)
+            
+            # Eşleştir
+            for i, question in enumerate(question_matches):
+                expected_answer = answer_matches[i] if i < len(answer_matches) else ""
+                
+                # Escape karakterlerini düzelt
+                question = question.replace('\\"', '"').replace('\\n', '\n')
+                expected_answer = expected_answer.replace('\\"', '"').replace('\\n', '\n')
+                
+                questions.append({
+                    "success": True,
+                    "question": question,
+                    "expected_answer": expected_answer
+                })
+            
+            logger.info(f"Manuel extract başarılı: {len(questions)} soru")
+            return questions
+            
+        except Exception as e:
+            logger.error(f"Manuel extract hatası: {e}")
+            return []
+
+    def _extract_code_block_from_question(self, question_text: str) -> Optional[str]:
+        """Soru metnindeki olası kod bloğunu çıkarır.
+
+        Basit sezgi: İlk satır başlık/soru kabul edilir; devam eden satırlar
+        kod bloğu olarak değerlendirilir.
+        """
+        if not isinstance(question_text, str) or not question_text.strip():
+            return None
+        lines = question_text.splitlines()
+        if len(lines) <= 1:
+            return None
+        candidate = "\n".join(lines[1:]).strip()
+        # Kod benzeri mi?
+        if self._is_code_like(candidate):
+            return candidate
+        return None
+
+    def _count_code_lines(self, code_block: str) -> int:
+        if not code_block:
+            return 0
+        return len([ln for ln in code_block.splitlines() if ln.strip()])
+
+    def _deduplicate_by_question(self, items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Aynı soru metnini tekrarlayan girdileri temizle."""
+        seen = set()
+        unique: List[Dict[str, Any]] = []
+        for it in items:
+            q = (it.get("question", "") or "").strip()
+            if q and q.lower() not in seen:
+                seen.add(q.lower())
+                unique.append(it)
+        return unique
+
+    def _generate_practical_code_questions_strict(
+        self,
+        role_name: str,
+        job_context: str,
+        description: str,
+        salary_coefficient: int,
+        type_name: str,
+        type_description: str,
+        count: int
+    ) -> List[Dict[str, Any]]:
+        """5–10 satır kod şartını kesin uygulayan ek üretim.
+
+        Not: JSON Array döndürülür; her eleman question/expected_answer içerir.
+        Question alanında ilk satır soru cümlesi, takip eden satırlar KOD olmalı.
+        """
+        try:
+            difficulty_distribution = get_difficulty_distribution_by_multiplier(salary_coefficient)
+            strict_prompt = f"""İlan Başlığı: {job_context}
+Pozisyon: {role_name}
+Maaş Katsayısı: {salary_coefficient}x
+Özel Şartlar: {description}
+
+Bu pozisyona ait {type_name} kategorisinde ({type_description}) SADECE KOD SORUSU üret.
+Tam olarak {count} adet soru döndür.
+
+Kesin kurallar:
+- İlk satır soru cümlesi olsun. Hemen alt satırlarda 5 ila 10 SATIR arasında TAM bir kod parçası yaz.
+- Kod 5 satırdan az olmayacak, 10 satırı geçmeyecek. Üç nokta …, yarım çağrı, eksik parantez/ayraç YASAK.
+- Markdown veya ``` kullanma. Kod satırlarını normal satırlar halinde, \n ile ayır.
+- Cevap 2-4 cümle kısa ve teknik olsun.
+
+ÇIKTI SADECE JSON ARRAY OLMALI:
+[
+  {{"question": "Soru metni\n<kod satırı 1>\n<kod satırı 2>\n...", "expected_answer": "..."}}
+]
+"""
+
+            config = get_openai_config()
+            response = self.client.chat.completions.create(
+                model=config["model"],
+                messages=[
+                    {"role": "system", "content": SYSTEM_MESSAGE},
+                    {"role": "user", "content": strict_prompt}
+                ],
+                max_tokens=config["max_tokens"],
+                temperature=config["temperature"]
+            )
+            generated_text = response.choices[0].message.content.strip()
+            items = self._parse_questions_array_robust(generated_text)
+            if not items:
+                items = self._try_parse_nested_json(generated_text)
+
+            # 5–10 satır filtresi uygula
+            filtered: List[Dict[str, Any]] = []
+            for it in items:
+                cb = self._extract_code_block_from_question(it.get("question", ""))
+                n = self._count_code_lines(cb or "")
+                if 5 <= n <= 10:
+                    filtered.append(it)
+            return filtered
+        except Exception:
+            return []
+
+    def _generate_practical_nocode_questions(
+        self,
+        role_name: str,
+        job_context: str,
+        description: str,
+        salary_coefficient: int,
+        type_name: str,
+        type_description: str,
+        count: int
+    ) -> List[Dict[str, Any]]:
+        """KOD İÇERMEYEN pratik uygulama soruları üretir (defisit doldurma)."""
+        try:
+            nocode_prompt = f"""İlan Başlığı: {job_context}
+Pozisyon: {role_name}
+Maaş Katsayısı: {salary_coefficient}x
+Özel Şartlar: {description}
+
+Bu pozisyona ait {type_name} kategorisinde ({type_description}) KOD İÇERMEYEN pratik sorular üret.
+Tam olarak {count} adet soru döndür.
+
+Kurallar:
+- KESİNLİKLE kod parçası verme; yalnızca sözel anlatım ve kavramsal/operasyonel açıklama sor.
+- Gerekirse komut/araç adlarını sözel olarak geçebilirsin (ör. Docker, systemctl), ancak kod veya komut satırı vermek YASAK.
+- Her soru kısa, doğrudan ve tek konu odaklı olsun.
+
+ÇIKTI SADECE JSON ARRAY OLMALI:
+[
+  {{"question": "Soru metni", "expected_answer": "..."}}
+]
+"""
+            config = get_openai_config()
+            response = self.client.chat.completions.create(
+                model=config["model"],
+                messages=[
+                    {"role": "system", "content": SYSTEM_MESSAGE},
+                    {"role": "user", "content": nocode_prompt}
+                ],
+                max_tokens=config["max_tokens"],
+                temperature=config["temperature"]
+            )
+            generated_text = response.choices[0].message.content.strip()
+            items = self._parse_questions_array_robust(generated_text)
+            if not items:
+                items = self._try_parse_nested_json(generated_text)
+            # Güvenlik: kod benzeri içerikleri ele
+            result: List[Dict[str, Any]] = []
+            for it in items:
+                q = it.get("question", "")
+                cb = self._extract_code_block_from_question(q)
+                if not cb:  # kod yoksa kabul
+                    result.append(it)
+            return result
+        except Exception:
+            return []
+
     def _fallback_parse(self, generated_text: str) -> List[Dict[str, Any]]:
         """Parse başarısız olursa fallback"""
         try:
@@ -568,15 +822,15 @@ Her soru özel şartlarda belirtilen farklı bir konuya odaklanmalıdır. Aynı 
 
 Örnek farklı konular: .NET Core, Entity Framework, MSSQL, PostgreSQL, JavaScript frameworks, Git/TFS, IIS, Docker, Redis, Web API, MVC, Agile, DevOps, Testing vb.
 
-Kod yazdırmak kesinlikle yasaktır. Soru içerisinde herhangi bir kod, algoritma, script, fonksiyon isteme ya da kod tamamlama ifadesi olmamalıdır. Adaydan sadece açıklama, analiz, yorum, yaklaşım veya deneyim paylaşımı beklenmelidir.
+Adaydan açıklama, analiz, yorum, yaklaşım veya deneyim paylaşımı beklenmelidir.
 
 🎯 SORU KALİTESİ KURALLARI:
 Soru doğrudan, açık ve konuya odaklı olmalı; içinde ayrıca 'adayın bilgi vermesi beklenir' gibi tekrar eden ifadeler olmamalıdır. Bu açıklama beklenen cevap kısmında yapılacaktır.
 
 Zorluk Dağılımı ({salary_coefficient}x seviyesi):
-- Temel Bilgi (%{difficulty_distribution["K1_Temel_Bilgi"]}): Tanım, kavram açıklama (kod içermez)
-- Uygulamalı Bilgi (%{difficulty_distribution["K2_Uygulamali"]}): Konfigürasyon, yöntem, kullanım önerisi (kod içermez)
-- Hata Çözümleme (%{difficulty_distribution["K3_Hata_Cozumleme"]}): Log analizi, hata tespiti ve değerlendirme (kod içermez)
+- Temel Bilgi (%{difficulty_distribution["K1_Temel_Bilgi"]}): Tanım, kavram açıklama
+- Uygulamalı Bilgi (%{difficulty_distribution["K2_Uygulamali"]}): Konfigürasyon, yöntem, kullanım önerisi
+- Hata Çözümleme (%{difficulty_distribution["K3_Hata_Cozumleme"]}): Log analizi, hata tespiti ve değerlendirme
 - Tasarım (%{difficulty_distribution["K4_Tasarim"]}): Mimari yapı, teknoloji karşılaştırması, ölçeklenebilirlik gibi konular
 - Stratejik (%{difficulty_distribution["K5_Stratejik"]}): Süreç iyileştirme, teknoloji seçimi, karar gerekçesi gibi liderlik odaklı sorular
 
@@ -876,13 +1130,56 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
                 logger.warning("Normal parse başarısız, nested JSON deneniyor...")
                 questions_data = self._try_parse_nested_json(generated_text)
             
+            # Hala boşsa, corrupted JSON string'i düzeltmeyi dene
+            if not questions_data and generated_text.strip():
+                logger.warning("Nested parse başarısız, corrupted JSON repair deneniyor...")
+                questions_data = self._try_repair_corrupted_json(generated_text)
+            
             # Son çare: Fallback parse
             if not questions_data:
                 logger.error("Tüm parse yöntemleri başarısız, fallback...")
                 questions_data = self._fallback_parse(generated_text)
             
+            # 5–10 satır şartını pratik uygulama için uygula
+            if question_type == "practical_application":
+                # 1) Kod satır aralığı kontrolü
+                kept: List[Dict[str, Any]] = []
+                for q in questions_data:
+                    cb = self._extract_code_block_from_question(q.get("question", ""))
+                    num = self._count_code_lines(cb or "")
+                    if 5 <= num <= 10:
+                        kept.append(q)
+
+                # 2) Eksik kod sorularını katı mod ile tamamlama
+                deficit = max(0, question_count - len(kept))
+                if deficit > 0:
+                    logger.warning(f"Pratik Uygulama: {deficit} kod sorusu eksik. Katı mod denenecek.")
+                    extra = self._generate_practical_code_questions_strict(
+                        role_name, job_context, description, salary_coefficient,
+                        type_name, type_description, deficit
+                    )
+                    kept.extend(extra)
+
+                # 3) Hâlâ eksikse kod içermeyen pratik sorularla doldur (toplamı garanti altına al)
+                deficit2 = max(0, question_count - len(kept))
+                if deficit2 > 0:
+                    logger.warning(f"Pratik Uygulama: katı mod da yetersiz. {deficit2} adet KODSUZ pratik soru ile tamamlanacak.")
+                    nocode = self._generate_practical_nocode_questions(
+                        role_name, job_context, description, salary_coefficient,
+                        type_name, type_description, deficit2
+                    )
+                    kept.extend(nocode)
+
+                # 4) Uniq + hedef uzunluğa indir
+                kept = self._deduplicate_by_question(kept)[:question_count]
+                questions_data = kept
+
             # Her soruya metadata ekle
             for i, question in enumerate(questions_data):
+                # Pratik dışı kategorilerde kodu temizle
+                if question_type != "practical_application":
+                    original_q = question.get("question", "")
+                    question["question"] = self._sanitize_non_practical_question(original_q)
                 question.update({
                     "question_type": question_type,
                     "type_name": type_name,
@@ -893,7 +1190,7 @@ Sonuç şu JSON formatında döndürülmelidir (category_code kullan):
                     "raw_response": None
                 })
             
-            logger.info(f"{type_name} kategorisi tamamlandı: {len(questions_data)} soru")
+            logger.info(f"{type_name} kategorisi tamamlandı: {len(questions_data)} / hedef {question_count} soru")
             
             return {
                 "success": True,
