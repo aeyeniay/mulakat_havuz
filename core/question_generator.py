@@ -2,7 +2,7 @@
 ANA SORU ÜRETİM MOTORU
 =====================
 
-Mevcut projeden uyarlanan OpenAI API entegrasyonu ile soru üretimi.
+OpenAI API entegrasyonu ile soru üretimi.
 """
 
 import json
